@@ -263,8 +263,8 @@ function App() {
                   } focus:outline-none focus:ring-2 transition-colors bg-white`}
                 >
                   <option value="">Select bill type</option>
-                  <option value="Invoice">Invoice</option>
-                  <option value="Proforma Invoice">Proforma Invoice</option>
+                  <option value="DUPLICATE - SELLERS COPY">DUPLICATE - SELLERS COPY</option>
+                  <option value="BUYERS COPY">BUYERS COPY</option>
                   <option value="Quote">Quote</option>
                   <option value="Receipt">Receipt</option>
                 </select>
