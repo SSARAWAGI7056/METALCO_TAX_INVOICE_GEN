@@ -274,7 +274,7 @@ function App() {
                     {errors.billType}
                   </p>
                 )}
-              </div>
+              </div> 
 
               {/* Bill Date */}
               <div>
