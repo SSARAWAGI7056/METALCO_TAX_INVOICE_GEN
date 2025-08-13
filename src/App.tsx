@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Send, FileText, CheckCircle, AlertCircle, Loader, Download, Building2, Calendar, Package, Hash, Plus, Sparkles, Shield, Zap, Clock } from 'lucide-react';
+import logo from './assets/logo.png';
 
 interface FormData {
   companyName: string;
@@ -205,7 +206,7 @@ function App() {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-2xl blur-lg opacity-75"></div>
                 <div className="relative bg-gradient-to-r from-blue-500 to-indigo-600 p-4 rounded-2xl shadow-xl">
-                  <Building2 className="h-10 w-10 text-white" />
+                  <img src={logo} alt="Company Logo" className="h-16 w-16 object-contain" />
                 </div>
               </div>
               <div>
@@ -664,7 +665,7 @@ function App() {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-2xl blur-lg opacity-75"></div>
                 <div className="relative bg-gradient-to-r from-blue-500 to-indigo-600 p-3 rounded-2xl shadow-xl">
-                  <Building2 className="h-8 w-8 text-white" />
+                  <img src={logo} alt="Company Logo" className="h-10 w-10 object-contain" />
                 </div>
               </div>
               <h3 className="text-3xl font-black bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">METALCO</h3>
