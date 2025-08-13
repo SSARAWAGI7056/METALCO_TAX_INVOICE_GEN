@@ -8,6 +8,7 @@ interface FormData {
   billNumber: string;
   billType: string;
   billDate: string;
+  consignmentNumber: string;
   itemDescription: string;
   customItemDescription: string;
   quantity: string;
@@ -43,6 +44,7 @@ function App() {
     billNumber: '',
     billType: '',
     billDate: '',
+    consignmentNumber: '',
     itemDescription: '',
     customItemDescription: '',
     quantity: '',
@@ -71,6 +73,7 @@ function App() {
     if (!formData.billNumber.trim()) newErrors.billNumber = 'Bill number is required';
     if (!formData.billType.trim()) newErrors.billType = 'Bill type is required';
     if (!formData.billDate) newErrors.billDate = 'Bill date is required';
+    if (!formData.consignmentNumber.trim()) newErrors.consignmentNumber = 'Consignment number is required';
     
     if (!formData.itemDescription) {
       newErrors.itemDescription = 'Item description is required';
@@ -192,6 +195,7 @@ function App() {
           billNumber: '',
           billType: '',
           billDate: '',
+          consignmentNumber: '',
           itemDescription: '',
           customItemDescription: '',
           quantity: '',
@@ -421,6 +425,34 @@ function App() {
                         <p className="text-red-600 text-sm mt-3 flex items-center font-medium">
                           <AlertCircle className="h-4 w-4 mr-2" />
                           {errors.billNumber}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Consignment Number */}
+                    <div>
+                      <label htmlFor="consignmentNumber" className="block text-sm font-bold text-slate-700 mb-3">
+                        Consignment Number
+                      </label>
+                      <div className="relative group">
+                        <input
+                          type="text"
+                          id="consignmentNumber"
+                          name="consignmentNumber"
+                          value={formData.consignmentNumber}
+                          onChange={handleInputChange}
+                          className={`w-full px-6 py-4 pl-14 rounded-xl border-2 ${errors.consignmentNumber 
+                            ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
+                            : 'border-slate-200 focus:border-emerald-500 focus:ring-emerald-200'
+                          } focus:outline-none focus:ring-4 transition-all duration-300 bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md font-medium`}
+                          placeholder="CON-2025-001"
+                        />
+                        <Package className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+                      </div>
+                      {errors.consignmentNumber && (
+                        <p className="text-red-600 text-sm mt-3 flex items-center font-medium">
+                          <AlertCircle className="h-4 w-4 mr-2" />
+                          {errors.consignmentNumber}
                         </p>
                       )}
                     </div>
