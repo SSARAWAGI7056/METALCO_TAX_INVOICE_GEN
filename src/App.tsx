@@ -263,10 +263,10 @@ function App() {
                   } focus:outline-none focus:ring-2 transition-colors bg-white`}
                 >
                   <option value="">Select bill type</option>
-                  <option value="DUPLICATE - SELLERS COPY">DUPLICATE - SELLERS COPY</option>
-                  <option value="BUYERS COPY">BUYERS COPY</option>
-                  <option value="Quote">Quote</option>
-                  <option value="Receipt">Receipt</option>
+                  <option value="DUPLICATE - SELLER'S COPY">DUPLICATE - SELLER'S COPY</option>
+                  <option value="BUYER'S COPY">BUYER'S COPY</option>
+                  <option value="TRANSPORTER'S COPY">TRANSPORTER'S COPY</option>
+                  <option value="BUYER'S EXTRA COPY">BUYER'S EXTRA COPY</option>
                 </select>
                 {errors.billType && (
                   <p className="text-red-600 text-sm mt-1 flex items-center">
