@@ -4,6 +4,7 @@ import logo from './assets/logo.png';
 
 interface FormData {
   companyName: string;
+  customCompanyName: string; // ⬅ new field
   billNumber: string;
   billType: string;
   billDate: string;
@@ -28,9 +29,17 @@ const PREDEFINED_ITEMS = [
   'Add New'
 ];
 
+const PREDEFINED_COMPANIES = [
+  'ABC Pvt Ltd',
+  'XYZ Industries',
+  'Add New'
+];
+
+
 function App() {
   const [formData, setFormData] = useState<FormData>({
     companyName: '',
+    customCompanyName: '',
     billNumber: '',
     billType: '',
     billDate: '',
@@ -54,7 +63,11 @@ function App() {
   const validateForm = (): boolean => {
     const newErrors: Partial<FormData> = {};
 
-    if (!formData.companyName.trim()) newErrors.companyName = 'Company name is required';
+    if (!formData.companyName) {
+      newErrors.companyName = 'Company name is required';
+    } else if (formData.companyName === 'Add New' && !formData.customCompanyName.trim()) {
+      newErrors.customCompanyName = 'Custom company name is required';
+    }
     if (!formData.billNumber.trim()) newErrors.billNumber = 'Bill number is required';
     if (!formData.billType.trim()) newErrors.billType = 'Bill type is required';
     if (!formData.billDate) newErrors.billDate = 'Bill date is required';
@@ -86,6 +99,10 @@ function App() {
     if (name === 'itemDescription' && value !== 'Add New') {
       setFormData(prev => ({ ...prev, customItemDescription: '' }));
     }
+
+    if (name === 'companyName' && value !== 'Add New') {
+      setFormData(prev => ({ ...prev, customCompanyName: '' }));
+    }
     
     if (errors[name as keyof FormData]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
@@ -94,7 +111,7 @@ function App() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setSubmissionState({
@@ -108,31 +125,46 @@ function App() {
     try {
       const submissionData = {
         ...formData,
-        itemDescription: formData.itemDescription === 'Add New' 
-          ? formData.customItemDescription 
-          : formData.itemDescription
+        companyName:
+          formData.companyName === 'Add New'
+            ? formData.customCompanyName
+            : formData.companyName,
+        itemDescription:
+          formData.itemDescription === 'Add New'
+            ? formData.customItemDescription
+            : formData.itemDescription
       };
 
-      const response = await fetch('https://shubamsarawagi.app.n8n.cloud/webhook/d05cad85-bc6b-4f41-ba84-b2275884ffa7', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submissionData)
-      });
+      const response = await fetch(
+        'https://shubamsarawagi.app.n8n.cloud/webhook/d05cad85-bc6b-4f41-ba84-b2275884ffa7',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(submissionData)
+        }
+      );
 
       if (response.ok) {
         const contentDisposition = response.headers.get('content-disposition');
         let fileName = 'tax-invoice.xlsx';
-        
+
         if (contentDisposition) {
-          const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+          const fileNameMatch = contentDisposition.match(
+            /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+          );
           if (fileNameMatch && fileNameMatch[1]) {
             fileName = fileNameMatch[1].replace(/['"]/g, '');
           }
         } else {
           const billNumber = formData.billNumber.replace(/[^a-zA-Z0-9]/g, '-');
-          const companyName = formData.companyName.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 20);
+          const companyName = (formData.companyName === 'Add New'
+            ? formData.customCompanyName
+            : formData.companyName
+          )
+            .replace(/[^a-zA-Z0-9]/g, '-')
+            .substring(0, 20);
           fileName = `${companyName}-${billNumber}-invoice.xlsx`;
         }
 
@@ -153,9 +185,10 @@ function App() {
           fileName: fileName,
           errorMessage: ''
         });
-        
+
         setFormData({
           companyName: '',
+          customCompanyName: '',
           billNumber: '',
           billType: '',
           billDate: '',
@@ -174,10 +207,14 @@ function App() {
         isSuccess: false,
         isError: true,
         fileName: '',
-        errorMessage: error instanceof Error ? error.message : 'An unexpected error occurred'
+        errorMessage:
+          error instanceof Error
+            ? error.message
+            : 'An unexpected error occurred'
       });
     }
   };
+
 
   const resetSubmissionState = () => {
     setSubmissionState({
@@ -279,24 +316,31 @@ function App() {
                     <h3 className="text-xl font-bold text-slate-800">Company Information</h3>
                     <div className="flex-1 h-px bg-gradient-to-r from-blue-200 to-transparent"></div>
                   </div>
-                  
+
+                  {/* Company Name Dropdown */}
                   <div>
                     <label htmlFor="companyName" className="block text-sm font-bold text-slate-700 mb-3">
                       Company Name
                     </label>
                     <div className="relative group">
-                      <input
-                        type="text"
+                      <select
                         id="companyName"
                         name="companyName"
                         value={formData.companyName}
                         onChange={handleInputChange}
-                        className={`w-full px-6 py-4 pl-14 rounded-xl border-2 ${errors.companyName 
-                          ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
-                          : 'border-slate-200 focus:border-blue-500 focus:ring-blue-200'
+                        className={`w-full px-6 py-4 pl-14 rounded-xl border-2 ${
+                          errors.companyName
+                            ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
+                            : 'border-slate-200 focus:border-blue-500 focus:ring-blue-200'
                         } focus:outline-none focus:ring-4 transition-all duration-300 bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md font-medium`}
-                        placeholder="Enter your company name"
-                      />
+                      >
+                        <option value="">Select company name</option>
+                        {PREDEFINED_COMPANIES.map((company) => (
+                          <option key={company} value={company}>
+                            {company === 'Add New' ? '+ Add New Company' : company}
+                          </option>
+                        ))}
+                      </select>
                       <Building2 className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
                     </div>
                     {errors.companyName && (
@@ -306,8 +350,40 @@ function App() {
                       </p>
                     )}
                   </div>
+
+                  {/* Step 7: Custom Company Name Input */}
+                  {formData.companyName === 'Add New' && (
+                    <div className="mt-4">
+                      <label htmlFor="customCompanyName" className="block text-sm font-bold text-slate-700 mb-3">
+                        Custom Company Name
+                      </label>
+                      <div className="relative group">
+                        <input
+                          type="text"
+                          id="customCompanyName"
+                          name="customCompanyName"
+                          value={formData.customCompanyName}
+                          onChange={handleInputChange}
+                          className={`w-full px-6 py-4 pl-14 rounded-xl border-2 ${
+                            errors.customCompanyName
+                              ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
+                              : 'border-slate-200 focus:border-blue-500 focus:ring-blue-200'
+                          } focus:outline-none focus:ring-4 transition-all duration-300 bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md font-medium`}
+                          placeholder="Enter custom company name"
+                        />
+                        <Plus className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-slate-400" />
+                      </div>
+                      {errors.customCompanyName && (
+                        <p className="text-red-600 text-sm mt-3 flex items-center font-medium">
+                          <AlertCircle className="h-4 w-4 mr-2" />
+                          {errors.customCompanyName}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
+
 
               {/* Invoice Details Section */}
               <div className="group">
